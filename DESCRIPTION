@@ -8,6 +8,9 @@ Description: A cleaned snapshot of artificial reef deployment records
     (FWC), with one row per deployment. Also provides a function to
     download and clean the latest data directly from FWC.
 License: MIT + file LICENSE
+URL: https://git.robwiederstein.org/rkw/flreefs,
+    https://docs.robwiederstein.org/flreefs/
+BugReports: https://git.robwiederstein.org/rkw/flreefs/issues
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
