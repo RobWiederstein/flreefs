@@ -1,0 +1,50 @@
+name: Deploy pkgdown site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:4.4
+
+    steps:
+      - name: Install Node.js (required for actions/checkout)
+        run: |
+          apt-get update -y
+          apt-get install -y nodejs
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install system dependencies
+        run: |
+          apt-get update -y
+          apt-get install -y rsync openssh-client
+
+      - name: Install R package dependencies
+        run: |
+          Rscript -e "install.packages(c('remotes', 'pkgdown'))"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+
+      - name: Build site
+        run: Rscript -e "pkgdown::build_site(preview = FALSE)"
+
+      - name: Deploy via rsync
+        # DEPLOY_SSH_KEY, DEPLOY_SERVER_USER and DEPLOY_SERVER_IP are
+        # user-level Gitea secrets shared by all docs sites.
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SERVER_IP: ${{ secrets.DEPLOY_SERVER_IP }}
+          SERVER_USER: ${{ secrets.DEPLOY_SERVER_USER }}
+          TARGET_DIR: /var/www/docs/flreefs/
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
+          rsync -avz --delete -e "ssh -i ~/.ssh/id_deploy" \
+            docs/ "${SERVER_USER}@${SERVER_IP}:${TARGET_DIR}"
