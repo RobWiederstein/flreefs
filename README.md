@@ -1,4 +1,4 @@
-# flreefs
+# flreefs <img src="man/figures/logo.png" align="right" height="139" alt="flreefs hex logo: a Reef Ball with a sea fan" />
 
 <!-- badges: start -->
 <!-- badges: end -->
