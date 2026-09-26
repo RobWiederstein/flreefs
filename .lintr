@@ -1,0 +1,5 @@
+linters: lintr::linters_with_defaults()
+exclusions: list(
+    # FWC MapServer URL in @source cannot be wrapped in roxygen.
+    "R/data.R" = list(line_length_linter = 144L)
+  )

@@ -18,7 +18,8 @@ raw_file <- "data-raw/reeflocations.json"
 # Delete the stored copy by hand to pick up newer FWC data.
 if (!file.exists(raw_file)) {
   jsonlite::write_json(
-    fetch_reef_pages(), raw_file, na = "null", digits = NA
+    fetch_reef_pages(), raw_file,
+    na = "null", digits = NA
   )
 }
 
@@ -29,8 +30,10 @@ reefs <- clean_reefs(api)
 # recent one dates the snapshot, so the vintage is read from the data
 # rather than typed in by hand.
 attr(reefs, "snapshot_date") <- as.Date(
-  as.POSIXct(max(api$last_edited_date) / 1000, origin = "1970-01-01",
-             tz = "UTC")
+  as.POSIXct(max(api$last_edited_date) / 1000,
+    origin = "1970-01-01",
+    tz = "UTC"
+  )
 )
 
 usethis::use_data(reefs, overwrite = TRUE, compress = "xz")

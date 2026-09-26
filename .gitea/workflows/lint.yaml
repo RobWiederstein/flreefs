@@ -1,0 +1,80 @@
+name: Lint & Format Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  style:
+    name: Format Check (styler)
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:4.4
+
+    steps:
+      - name: Install Node.js (required for actions/checkout)
+        run: |
+          apt-get update -y
+          apt-get install -y nodejs
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install styler
+        run: Rscript -e "install.packages('styler')"
+
+      - name: Fail if any file needs restyling
+        run: Rscript -e "styler::style_pkg(dry = 'fail')"
+
+  lintr:
+    name: Lint (lintr)
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:4.4
+
+    steps:
+      - name: Install Node.js (required for actions/checkout)
+        run: |
+          apt-get update -y
+          apt-get install -y nodejs
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install lintr and the package
+        # object_usage_linter needs flreefs installed to see internal
+        # functions defined in other files.
+        run: |
+          Rscript -e "install.packages(c('lintr', 'remotes'))"
+          Rscript -e "remotes::install_local('.', dependencies = TRUE)"
+
+      - name: Fail on any lint
+        run: |
+          Rscript -e "
+            lints <- lintr::lint_package()
+            print(lints)
+            if (length(lints) > 0) quit(status = 1)
+          "
+
+  lychee:
+    name: Link Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude 'localhost'
+            --exclude '192\.168\.'
+            --exclude 'git\.robwiederstein\.org'
+            '**/*.md'
+            'R/*.R'
+          fail: true
