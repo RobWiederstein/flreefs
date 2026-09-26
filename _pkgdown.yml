@@ -1,0 +1,14 @@
+url: https://docs.robwiederstein.org/flreefs/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Data
+  desc: Artificial reef deployments published by FWC.
+  contents:
+  - reefs
+- title: Current data
+  desc: Fetch what FWC publishes today.
+  contents:
+  - fetch_reefs

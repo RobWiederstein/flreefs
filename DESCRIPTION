@@ -1,0 +1,24 @@
+Package: flreefs
+Title: Florida Artificial Reef Deployment Data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Rob", "Wiederstein", , "khuon68@gmail.com", role = c("aut", "cre"))
+Description: A cleaned snapshot of artificial reef deployment records
+    published by the Florida Fish and Wildlife Conservation Commission
+    (FWC), with one row per deployment. Also provides a function to
+    download and clean the latest data directly from FWC.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+LazyDataCompression: xz
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.1)
+Imports: 
+    jsonlite,
+    tools
+Suggests: 
+    curl,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
